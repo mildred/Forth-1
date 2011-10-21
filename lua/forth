@@ -39,6 +39,26 @@ symbol_table['.'] = function(...)
   io.write(tostring(pop()), " ")
 end
 
+symbol_table['<='] = function(...)
+  local a, b = pop(2)
+  push(a <= b)
+end
+
+symbol_table['<'] = function(...)
+  local a, b = pop(2)
+  push(a < b)
+end
+
+symbol_table['>='] = function(...)
+  local a, b = pop(2)
+  push(a >= b)
+end
+
+symbol_table['>'] = function(...)
+  local a, b = pop(2)
+  push(a > b)
+end
+
 -- Comment
 symbol_table['('] = function(original_dispatcher)
   return make_dispatch_skip_until(")", original_dispatcher)
