@@ -1,0 +1,89 @@
+From 26c7855a1474b42a08bc7d8efdd3723f8583842b Mon Sep 17 00:00:00 2001
+From: Shanti Bouchez <shanti@sogilis.com>
+Date: Fri, 21 Oct 2011 16:27:41 +0200
+Subject: [PATCH 3/3] Implementing new word definitions and words NOP DUP and
+ DROP
+
+Word definitions start with ":" and end with ";"
+It is implemented by overriding the executing loop after ":" to record
+the words that are read and generating a function inserted in the symbol
+table.
+
+The following new words are also introduced:
+
+NOP: does nothing
+DUP: duplicates the last element on the stack
+DROP: pop the last element on the stack and discard it
+
+Conflicts:
+	lua/forth
+---
+ features/functions.feature |    9 +++++++++
+ lua/forth                  |   28 ++++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+)
+ create mode 100644 features/functions.feature
+
+diff --git a/features/functions.feature b/features/functions.feature
+new file mode 100644
+index 0000000..e5b9afd
+--- /dev/null
++++ b/features/functions.feature
+@@ -0,0 +1,9 @@
++Feature: The Forth interpreter shall accept function definitions
++
++  Background:
++    Given a forth interpreter
++
++  Scenario: If True
++     When I execute ": x DUP . . ; 1 x"
++     Then I should get "1 1 ok"
++
+diff --git a/lua/forth b/lua/forth
+index da949db..b9e04b9 100755
+--- a/lua/forth
++++ b/lua/forth
+@@ -59,6 +59,18 @@ symbol_table['>'] = function(...)
+   push(a > b)
+ end
+ 
++symbol_table.NOP = function(...)
++end
++
++symbol_table.DUP = function(...)
++  local a = pop()
++  push(a, a)
++end
++
++symbol_table.DROP = function(...)
++  pop()
++end
++
+ -- Comment
+ symbol_table['('] = function(original_dispatcher)
+   return make_dispatch_skip_until(")", original_dispatcher)
+@@ -76,6 +88,22 @@ symbol_table.IF = function(original_dispatcher)
+   end
+ end
+ 
++-- Define new symbol
++symbol_table[':'] = function(original_dispatcher)
++  local accumulator = {}
++  return function(disp, word)
++    if word == ";" then
++      local sym = table.remove(accumulator, 1)
++      symbol_table[sym] = function(disp)
++        dispatch_list(original_dispatcher, accumulator)
++      end
++      return original_dispatcher
++    else
++      accumulator[#accumulator+1] = word
++    end
++  end
++end
++
+ --
+ --  Dispatch
+ ----------------
+-- 
+1.7.10.2
+
