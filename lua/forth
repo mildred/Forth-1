@@ -59,6 +59,18 @@ symbol_table['>'] = function(...)
   push(a > b)
 end
 
+symbol_table.NOP = function(...)
+end
+
+symbol_table.DUP = function(...)
+  local a = pop()
+  push(a, a)
+end
+
+symbol_table.DROP = function(...)
+  pop()
+end
+
 -- Comment
 symbol_table['('] = function(original_dispatcher)
   return make_dispatch_skip_until(")", original_dispatcher)
