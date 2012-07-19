@@ -59,6 +59,11 @@ symbol_table['>'] = function(...)
   push(a > b)
 end
 
+-- Comment
+symbol_table['('] = function(original_dispatcher)
+  return make_dispatch_skip_until(")", original_dispatcher)
+end
+
 symbol_table.IF = function(original_dispatcher)
   if pop() then
     return make_dispatch_execute_until(original_dispatcher, "ELSE",
