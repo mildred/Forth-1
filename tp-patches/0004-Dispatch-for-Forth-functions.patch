@@ -1,0 +1,32 @@
+From bae249e98a08ffdcf5f27fa831b453f182fa7da8 Mon Sep 17 00:00:00 2001
+From: Simon Denier <simon@sogilis.com>
+Date: Thu, 19 Jul 2012 11:42:20 +0200
+Subject: [PATCH 4/7] Dispatch for Forth functions
+
+---
+ lua/forth | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/lua/forth b/lua/forth
+index f43d037..4f438db 100755
+--- a/lua/forth
++++ b/lua/forth
+@@ -96,6 +96,15 @@ function dispatch(disp, word)
+   end
+ end
+ 
++function dispatch_list(disp, list)
++  for i = 1, #list do
++    local res = disp(disp, list[i])
++    if res ~= nil then
++      disp = res
++    end
++  end
++end
++
+ --
+ --  Dispatcher Factories
+ ----------------------------
+-- 
+1.7.11.1
+

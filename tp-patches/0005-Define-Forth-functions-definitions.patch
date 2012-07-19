@@ -1,0 +1,56 @@
+From 2259e7c6d273ba6b41351defec9bd3fa340dea17 Mon Sep 17 00:00:00 2001
+From: Simon Denier <simon@sogilis.com>
+Date: Thu, 19 Jul 2012 11:42:58 +0200
+Subject: [PATCH 5/7] Define Forth functions definitions
+
+---
+ features/functions.feature |  9 +++++++++
+ lua/forth                  | 16 ++++++++++++++++
+ 2 files changed, 25 insertions(+)
+ create mode 100644 features/functions.feature
+
+diff --git a/features/functions.feature b/features/functions.feature
+new file mode 100644
+index 0000000..e5b9afd
+--- /dev/null
++++ b/features/functions.feature
+@@ -0,0 +1,9 @@
++Feature: The Forth interpreter shall accept function definitions
++
++  Background:
++    Given a forth interpreter
++
++  Scenario: If True
++     When I execute ": x DUP . . ; 1 x"
++     Then I should get "1 1 ok"
++
+diff --git a/lua/forth b/lua/forth
+index 4f438db..fef0b3e 100755
+--- a/lua/forth
++++ b/lua/forth
+@@ -71,6 +71,22 @@ symbol_table.IF = function(original_dispatcher)
+   end
+ end
+ 
++-- Define new symbol
++symbol_table[':'] = function(original_dispatcher)
++  local accumulator = {}
++  return function(disp, word)
++    if word == ";" then
++      local sym = table.remove(accumulator, 1)
++      symbol_table[sym] = function(disp)
++        dispatch_list(original_dispatcher, accumulator)
++      end
++      return original_dispatcher
++    else
++      accumulator[#accumulator+1] = word
++    end
++  end
++end
++
+ --
+ --  Dispatch
+ ----------------
+-- 
+1.7.11.1
+
