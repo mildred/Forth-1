@@ -1,0 +1,43 @@
+From 44a9dc5cbd6bc2b8f583870ca5652029b68ed4bc Mon Sep 17 00:00:00 2001
+From: Simon Denier <simon@sogilis.com>
+Date: Thu, 19 Jul 2012 11:41:16 +0200
+Subject: [PATCH 3/7] Implement missing integer comparison operations
+
+---
+ lua/forth | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/lua/forth b/lua/forth
+index 6b164a9..f43d037 100755
+--- a/lua/forth
++++ b/lua/forth
+@@ -39,6 +39,26 @@ symbol_table['.'] = function(...)
+   io.write(tostring(pop()), " ")
+ end
+ 
++symbol_table['<='] = function(...)
++  local a, b = pop(2)
++  push(a <= b)
++end
++
++symbol_table['<'] = function(...)
++  local a, b = pop(2)
++  push(a < b)
++end
++
++symbol_table['>='] = function(...)
++  local a, b = pop(2)
++  push(a >= b)
++end
++
++symbol_table['>'] = function(...)
++  local a, b = pop(2)
++  push(a > b)
++end
++
+ symbol_table.IF = function(original_dispatcher)
+   if pop() then
+     return make_dispatch_execute_until(original_dispatcher, "ELSE",
+-- 
+1.7.11.1
+

@@ -1,0 +1,55 @@
+From 003636da1c9f5fedef4670984218cc6d932e3258 Mon Sep 17 00:00:00 2001
+From: Simon Denier <simon@sogilis.com>
+Date: Thu, 19 Jul 2012 11:39:24 +0200
+Subject: [PATCH 1/7] Dispatch functions for conditions and comments
+
+---
+ lua/forth | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/lua/forth b/lua/forth
+index ec88caf..aae7469 100755
+--- a/lua/forth
++++ b/lua/forth
+@@ -23,6 +23,9 @@ local push, pop, dispatch, main_loop
+ -- dispatch(...) --> procédure appelée pour dispatcher les symboles lus
+ -- main_loop()   --> exécute la boucle principale
+ 
++local make_dispatch_execute_until
++local make_dispatch_skip_until
++
+ --
+ --  Implémantation des fonctions de base de Forth
+ -----------------------------------------------------
+@@ -62,6 +65,28 @@ function dispatch(disp, word)
+ end
+ 
+ --
++--  Dispatcher Factories
++----------------------------
++
++function make_dispatch_execute_until(original_dispatcher, until_word, after_dispatcher)
++  return function(disp, word)
++    if word == until_word then
++      return after_dispatcher
++    else
++      return original_dispatcher(disp, word)
++    end
++  end
++end
++
++function make_dispatch_skip_until(until_word, after_dispatcher)
++  return function(disp, word)
++    if word == until_word then
++      return after_dispatcher
++    end
++  end
++end
++
++--
+ --  Boucle principale
+ -------------------------
+ 
+-- 
+1.7.11.1
+
