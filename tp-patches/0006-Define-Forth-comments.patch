@@ -1,0 +1,45 @@
+From ca249ccd95486703acb68349334a54e2ef6421e2 Mon Sep 17 00:00:00 2001
+From: Simon Denier <simon@sogilis.com>
+Date: Thu, 19 Jul 2012 11:43:21 +0200
+Subject: [PATCH 6/7] Define Forth comments
+
+---
+ features/comments.feature | 9 +++++++++
+ lua/forth                 | 5 +++++
+ 2 files changed, 14 insertions(+)
+ create mode 100644 features/comments.feature
+
+diff --git a/features/comments.feature b/features/comments.feature
+new file mode 100644
+index 0000000..6d40109
+--- /dev/null
++++ b/features/comments.feature
+@@ -0,0 +1,9 @@
++Feature: The Forth interpreter shall understand comments
++
++  Background:
++    Given a forth interpreter
++
++  Scenario: Comment in an addition
++     When I execute "3 ( 6 ) 5 + ."
++     Then I should get "8 ok"
++
+diff --git a/lua/forth b/lua/forth
+index fef0b3e..3456647 100755
+--- a/lua/forth
++++ b/lua/forth
+@@ -59,6 +59,11 @@ symbol_table['>'] = function(...)
+   push(a > b)
+ end
+ 
++-- Comment
++symbol_table['('] = function(original_dispatcher)
++  return make_dispatch_skip_until(")", original_dispatcher)
++end
++
+ symbol_table.IF = function(original_dispatcher)
+   if pop() then
+     return make_dispatch_execute_until(original_dispatcher, "ELSE",
+-- 
+1.7.11.1
+

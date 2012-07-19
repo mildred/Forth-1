@@ -1,0 +1,35 @@
+From d7fe966298e85c172f8e4ad8cacf57816b4d13ff Mon Sep 17 00:00:00 2001
+From: Simon Denier <simon@sogilis.com>
+Date: Thu, 19 Jul 2012 11:45:26 +0200
+Subject: [PATCH 7/7] Define words NOP DUP and DROP
+
+---
+ lua/forth | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/lua/forth b/lua/forth
+index 3456647..b9e04b9 100755
+--- a/lua/forth
++++ b/lua/forth
+@@ -59,6 +59,18 @@ symbol_table['>'] = function(...)
+   push(a > b)
+ end
+ 
++symbol_table.NOP = function(...)
++end
++
++symbol_table.DUP = function(...)
++  local a = pop()
++  push(a, a)
++end
++
++symbol_table.DROP = function(...)
++  pop()
++end
++
+ -- Comment
+ symbol_table['('] = function(original_dispatcher)
+   return make_dispatch_skip_until(")", original_dispatcher)
+-- 
+1.7.11.1
+
